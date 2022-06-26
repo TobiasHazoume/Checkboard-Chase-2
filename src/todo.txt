@@ -1,0 +1,10 @@
+how to render a player onto the screen
+[] make the players constructor have its inital pos and  its idle texture
+[] make a texture to render the player on screen
+[] inistalize the player in main so is on the screen once the game opens
+
+movement
+[x] have the player accept inputs from the keyboard
+    [p] test if the player is accepting inputs 
+[] change the position it is on the screen based on the key pressed
+[] if the user is holding down a button keep moving the player in that direction

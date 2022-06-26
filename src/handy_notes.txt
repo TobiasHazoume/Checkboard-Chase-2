@@ -1,0 +1,39 @@
+what is a struct?
+it's like a class but the default field is public by default
+, unlike a class where fields are private by default.
+example:
+
+```
+typedef struct SDL_Rect
+{
+    int x, y;
+    int w, h;
+} SDL_Rect;
+
+```
+
+what are emuns?
+ Enumerations are a fast and simple way to make constants variables instead of having to do 
+
+ ```
+ const int KEY_PRESS_SURFACE_DEFAULT = 0; 
+ const int KEY_PRESS_SURFACE_UP = 1; 
+ const int KEY_PRESS_SURFACE_DOWN = 2; 
+ ```
+ and such.
+
+ heres how to make  emums
+ ```
+enum KeyPressSurfaces
+{
+    KEY_PRESS_SURFACE_DEFAULT,
+    KEY_PRESS_SURFACE_UP,
+    KEY_PRESS_SURFACE_DOWN,
+    KEY_PRESS_SURFACE_LEFT,
+    KEY_PRESS_SURFACE_RIGHT,
+    KEY_PRESS_SURFACE_TOTAL
+};
+ ```
+what values to these have?
+enums default to start counting at 0 and go up by one for each enumeration you declare 
+so KEY_PRESS_SURFACE_TOTAL = 5. (sidenote enums could make switch staement conveient)
