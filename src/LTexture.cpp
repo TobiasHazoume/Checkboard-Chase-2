@@ -1,4 +1,4 @@
-
+/*
 #include <iostream>
 #include <C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\sdl\SDL.h>
 #include <C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\sdl\SDL_image.h>
@@ -97,4 +97,4 @@ int LTexture::getWidth()
 int LTexture::getHeight()
 {
 	return mHeight;
-}
+}*/
