@@ -7,6 +7,9 @@
 class LTexture
 {
 	public:
+
+		//The window renderer but is also being used to render textures
+		SDL_Renderer* gRenderer = NULL;
 		//Initializes variables
 		LTexture();
 

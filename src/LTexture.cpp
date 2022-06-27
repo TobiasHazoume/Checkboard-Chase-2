@@ -37,6 +37,7 @@ bool LTexture::loadFromFile( std::string path )
 	else
 	{
 		//Color key image this is what whats our images transparent
+		//cyan is the color
 		SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
 
 		//Create texture from surface pixels

@@ -4,6 +4,8 @@
 #include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Entity.hpp"
 #include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Utils.hpp"
 #include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Player.hpp"
+#include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\LTexture.hpp"
+
 #include<iostream>
 #include <vector>
 
@@ -29,39 +31,24 @@ int main(int argc, char* argv[]){
     RenderWindow window("GAME v1.0", 1080,700);
     std::cout << window.getRefreshRate() << std::endl;
 
-
-
-
-
     //load a texture 
-    SDL_Texture* grassTexture = window.loadTexture("C:/Users/Tobias/Documents/programming_projects/Learning_C++/Checkboard-Chase-2/res/gfx/kirby_shade.png");
     
-    SDL_Texture* wha = window.loadTexture("C:/Users/Tobias/Documents/programming_projects/Learning_C++/Checkboard-Chase-2/res/gfx/wha.png");
+    SDL_Texture* link = window.loadTexture("C:/Users/Tobias/Documents/programming_projects/Learning_C++/Checkboard-Chase-2/res/gfx/green_link.png");
 
     //this creates an dynamic array known as a vector in c++ of enities which is  but doesnt have it shown up on the screen
     //theres was to be an eaier way ;-;
     
-    std::vector<Entity> entitiesVect = {Entity(Vector2f(0,0), grassTexture),
-                                        Entity(Vector2f(30, 0), grassTexture),
-                                        Entity(Vector2f(30, 30), grassTexture)};
-    {//the pont of these curlybraces is to prevent wilson from hogging memory till the end of the program
-    //by having it get rid of the memory after its been pushed to entitiesVect
-    //https://youtu.be/2qjMHNHV4Uw?list=PL2RPjWnJduNmXHRYwdtublIPdlqocBoLS&t=661
-
-        //example of push an entity element into a vector
-        Entity wilson(Vector2f(100,50), grassTexture);
-        entitiesVect.push_back(wilson);
-        
  
-        
-    }
-    
+
     //player one entity
-    Entity entityPlayer1(Vector2f(600,77), wha);
+    //reminder: remove the vector2f parameter later once rendernig works. its repetitive
+    Entity entityPlayer1(Vector2f(600,77), link);
     //make a player object called player one
     Player player1(entityPlayer1);
-    //push player one to  entitiesVect
-    entitiesVect.push_back(entityPlayer1);
+
+    //Scene sprites
+    SDL_Rect gLinkClips[ player1.PLAYER_ANIMATIONS_TOTAL ];
+    LTexture gLinkSkin;
     
     //https://youtu.be/pjLpipQRMIw?list=PL2RPjWnJduNmXHRYwdtublIPdlqocBoLS&t=1340
     bool gamerunning = true;
@@ -105,11 +92,20 @@ int main(int argc, char* argv[]){
                     gamerunning =false;
                 }
 
+                //this Clears the screen but i probably dont need this
+				//SDL_SetRenderDrawColor( gLinkSkin.gRenderer, 0x90, 0xa4, 0xae, 0xFF );
+				//SDL_RenderClear( gLinkSkin.gRenderer );
 
+                //Render Link
+                //change to default!!
+				player1.gLinkSkin.render( 600,77, &gLinkClips[ player1.PLAYER_UP ] );
+                //hopefully this will take in inputs
+                player1.handleEvent(e);
                 //Handle input for the dot
 			    player1.move();
-
-               
+				//Update screen
+				SDL_RenderPresent( gLinkSkin.gRenderer );
+  
             }
             //if the  accumulator reaches it threshhold
             //subtract the timestep since that time steps been prosessed
@@ -121,13 +117,6 @@ int main(int argc, char* argv[]){
         const float  alpha =accumulator / timeStep;
 
         window.clear();
-        //the & is for getting a reference in instead of getting a copy of the value
-        //this is were  each element in the vector gets rendered on to the screen
-        for(Entity& e : entitiesVect){
-        window.render(e);
-        }
-
-
         window.display();
 
         int frameTicks = SDL_GetTicks() - startTicks;
