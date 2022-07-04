@@ -37,3 +37,26 @@ enum KeyPressSurfaces
 what values to these have?
 enums default to start counting at 0 and go up by one for each enumeration you declare 
 so KEY_PRESS_SURFACE_TOTAL = 5. (sidenote enums could make switch staement conveient)
+
+what is the -> operator?
+its used to  access members of a structure or a class through a pointer
+
+how do I  do this?
+```
+void LTexture::render( int x, int y, SDL_Rect* clip )
+{
+	//Set rendering space and render to screen
+	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
+	
+	//Set clip rendering dimensions
+	if( clip != NULL )
+	{
+		//this means renderquad.w is = to the value of x inside the obj clip  
+		//this is done using ht pointer clip
+		renderQuad.w = clip->w;
+		
+		renderQuad.h = clip->h;
+	}
+```
+I'snt that like the . operator?
+ yes but it does NOT access members with a pointer 
