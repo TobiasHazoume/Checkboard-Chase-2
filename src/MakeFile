@@ -1,2 +1,2 @@
 all:
-	g++ -Iinclude -Iinclude/sdl -Iinclude/headers -LC:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\lib -o Main C:/Users/Tobias/Documents/programming_projects/Learning_C++/Checkboard-Chase-2/src/*.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+	g++ -I include -I include/sdl -I include/headers -L C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\lib -o Main C:/Users/Tobias/Documents/programming_projects/Learning_C++/Checkboard-Chase-2/src/*.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image

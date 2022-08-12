@@ -1,135 +1,190 @@
 #include <C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\sdl\SDL.h>
 #include <C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\sdl\SDL_image.h>
-#include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\RenderWindow.hpp"
-#include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Entity.hpp"
-#include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Utils.hpp"
-#include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Player.hpp"
-#include "C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\LTexture.hpp"
-
+#include <C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Player.hpp>
+#include <C:\Users\Tobias\Documents\programming_projects\Learning_C++\Checkboard-Chase-2\include\headers\Initialize.hpp>
 #include<iostream>
 #include <vector>
 
-int main(int argc, char* argv[]){
+
+
+//Frees media and shuts down SDL
+void close();
+
+Initialize initializer;
+
+
+//create the player 1 object :)
+Player player1;
+
+/*
+bool init()
+{
+	//Initialization flag
+	bool success = true;
+
+	//Initialize SDL
+	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+	{
+		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+		success = false;
+	}
+	else
+	{
+		//Set texture filtering to linear
+		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+		{
+			printf( "Warning: Linear texture filtering not enabled!" );
+		}
+
+		//Create window
+		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		if( gWindow == NULL )
+		{
+			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+			success = false;
+		}
+		else
+		{
+			//Create renderer for window
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+			if( gRenderer == NULL )
+			{
+				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+				success = false;
+			}
+			else
+			{
+				//Initialize renderer color
+				SDL_SetRenderDrawColor( gRenderer, 86, 98, 246, 5 );
+
+				//Initialize PNG loading
+				int imgFlags = IMG_INIT_PNG;
+				//check is we were able to initialize PNG loading
+				if( !( IMG_Init( imgFlags ) & imgFlags ) )
+				{
+					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+					success = false;
+				}
+			}
+		}
+	}
+
+	return success;
+}*/
 
 
 
-    //will check if SDL is giving us an error
-    //and display the error
-    if(SDL_Init(SDL_INIT_VIDEO) > 0){
-        std::cout << "SDL_Init HAS FAILED. SDL_ERROR: " 
-        << SDL_GetError() << std::endl;
-    }
+void close()
+{
+	//Deallocate Textures
+	for( int i = 0; i < player1.KEY_PRESS_TEXTURE_TOTAL; ++i )
+	{
+		SDL_DestroyTexture( player1.gKeyPressTextures[ i ] );
+		player1.gKeyPressTextures[ i ] = NULL;
+	}
 
-    //check if sdl is unable to get a set of pngs
-    //and display the error
-    if(!(IMG_Init(IMG_INIT_PNG |IMG_INIT_JPG))){
-        std::cout <<"IMG_init has FAILED. Error: " 
-        << SDL_GetError() << std::endl;
-    }
+	//Free loaded image
+	SDL_DestroyTexture( player1.gTexture );
+	player1.gTexture = NULL;
 
-    //create our render window
-    RenderWindow window("GAME v1.0", 1080,700);
-    std::cout << window.getRefreshRate() << std::endl;
+	//Destroy window	
+	SDL_DestroyRenderer( initializer.gRenderer );
+	SDL_DestroyWindow( initializer.gWindow );
+	initializer.gWindow = NULL;
+	initializer.gRenderer = NULL;
 
-    //load a texture 
-    
-    SDL_Texture* link = window.loadTexture("C:/Users/Tobias/Documents/programming_projects/Learning_C++/Checkboard-Chase-2/res/gfx/green_link.png");
+	//Quit SDL subsystems
+	IMG_Quit();
+	SDL_Quit();
+}
 
-    //this creates an dynamic array known as a vector in c++ of enities which is  but doesnt have it shown up on the screen
-    //theres was to be an eaier way ;-;
-    
- 
 
-    //player one entity
-    //reminder: remove the vector2f parameter later once rendernig works. its repetitive
-    Entity entityPlayer1(Vector2f(600,77), link);
-    //make a player object called player one
-    Player player1(entityPlayer1);
+int main(int argv, char** args)
+{
+	//Start up SDL and create window
+	if( !initializer.init() )
+	{
+		printf( "Failed to initialize!\n" );
+	}
+	else
+	{
+		//Load media
+		if( !player1.loadPlayer(initializer))
+		{
+			printf( "Failed to load media!\n" );
+		}
+		else
+		{	
+			//Main loop flag
+			bool quit = false;
 
-    //Scene sprites
-    SDL_Rect gLinkClips[ player1.PLAYER_ANIMATIONS_TOTAL ];
-    LTexture gLinkSkin;
-    
-    //https://youtu.be/pjLpipQRMIw?list=PL2RPjWnJduNmXHRYwdtublIPdlqocBoLS&t=1340
-    bool gamerunning = true;
-     
-    //create an event
-    SDL_Event event;
+			//Event handler
+			SDL_Event e;
 
-    //the ammount of time we advance the simulation forward by each frame
-    //we dont want to change this number once the program starts so its const
-    const float timeStep =0.01f;
-    //basicly limits the amount of times the program updates per sec
-    //https://youtu.be/RaB60Ujle7o?list=PL2RPjWnJduNmXHRYwdtublIPdlqocBoLS&t=434
-    float accumulator = 0.0f;
-    
-    float currentTime = utils::hireTimeInSeconds();
+			//Set default current Texture
+			player1.gTexture = player1.gKeyPressTextures[ player1.KEY_PRESS_TEXTURE_DEFAULT ];
 
-    //Event handler
-	SDL_Event e;
+			//While application is running
+			while( !quit )
+			{
+                //process the event queue until it is empty
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					//User requests quit
+					if( e.type == SDL_QUIT )
+					{
+						quit = true;
+					}
+					// add some switch statements
+					else if( e.type == SDL_KEYDOWN )
+					{
+						//Select surfaces based on key press
+						switch( e.key.keysym.sym )
+						{
+							case SDLK_UP:
+							player1.gTexture = player1.gKeyPressTextures[ player1.KEY_PRESS_TEXTURE_UP ];
+							break;
 
-    //while the game check if the event we are poling is
-    //SDL_QUIT and if it is than close the gmae
-    
-    while(gamerunning){
-        
-        int startTicks = SDL_GetTicks();
+							case SDLK_DOWN:
+							player1.gTexture = player1.gKeyPressTextures[ player1.KEY_PRESS_TEXTURE_DOWN ];
+							break;
 
-        float newTime = utils::hireTimeInSeconds();
-        float frameTime = newTime - currentTime;
+							case SDLK_LEFT:
+							player1.gTexture = player1.gKeyPressTextures[ player1.KEY_PRESS_TEXTURE_LEFT ];
+							break;
 
-        currentTime = newTime;
+							case SDLK_RIGHT:
+							player1.gTexture = player1.gKeyPressTextures[ player1.KEY_PRESS_TEXTURE_RIGHT ];
+							break;
 
-        //add to accumulator
-        accumulator += frameTime;
+							// [!]
+							//change the gfx to face the proper direction based on the last image displayed
+							case SDLK_SPACE:
+							player1.gTexture = player1.gKeyPressTextures[ player1.KEY_PRESS_TEXTURE_ATTACK ];
+							break;
 
-        while(accumulator >= timeStep)
-        {
-            //get our controls and events
-            while(SDL_PollEvent(&event)){
-                if (event.type ==SDL_QUIT)
-                {
-                    gamerunning =false;
-                }
+							default:
+							player1.gTexture = player1.gKeyPressTextures[ player1.KEY_PRESS_TEXTURE_DEFAULT ];
+							break;
+						}
+					}
 
-                //this Clears the screen but i probably dont need this
-				//SDL_SetRenderDrawColor( gLinkSkin.gRenderer, 0x90, 0xa4, 0xae, 0xFF );
-				//SDL_RenderClear( gLinkSkin.gRenderer );
+                }//when its done processing events do the code below
 
-                //Render Link
-                //change to default!!
-				player1.gLinkSkin.render( 600,77, &gLinkClips[ player1.PLAYER_UP ] );
-                //hopefully this will take in inputs
-                player1.handleEvent(e);
-                //Handle input for the dot
-			    player1.move();
-				//Update screen
-				SDL_RenderPresent( gLinkSkin.gRenderer );
-  
-            }
-            //if the  accumulator reaches it threshhold
-            //subtract the timestep since that time steps been prosessed
-            accumulator -= timeStep;
+				//Clear screen
+				SDL_RenderClear( initializer.gRenderer );
 
-        }
+				//Render texture to screen
+				SDL_RenderCopy( initializer.gRenderer, player1.gTexture, NULL, player1.pointRenderQuad );
 
-        //is the time left in the accumulator as a percentage
-        const float  alpha =accumulator / timeStep;
+				//it updates the render every frame with the proper render
+				SDL_RenderPresent( initializer.gRenderer );
+			}
+		}
+	}
 
-        window.clear();
-        window.display();
+	//Free resources and close SDL
+	close();
 
-        int frameTicks = SDL_GetTicks() - startTicks;
-        //add a minimum amount of time for a frame to take
-        //basiscly is the games running to fast then delay the game
-        if(frameTicks < 1000 / window.getRefreshRate()){
-            SDL_Delay(1000 / window.getRefreshRate() - frameTicks);
-        }
-
-    }
-
-    window.cleanUp();
-    SDL_Quit();
-
-    return 0;
+	return 0;
 }
