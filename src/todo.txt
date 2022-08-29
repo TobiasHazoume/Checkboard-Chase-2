@@ -1,2 +1,4 @@
 [x] render a player onto the screen
+[] move our player in a specific 
+direction every frame by changing the x and y postion of the sprite
 

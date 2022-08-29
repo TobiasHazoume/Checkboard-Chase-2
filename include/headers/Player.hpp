@@ -9,7 +9,11 @@ class Player
 
 public:
 
-
+    // [!] determine if i still need these or not
+    //for making invisible walls
+    //The dimensions of the player i kinda guess this 
+    static const int PLAYER_WIDTH = 22;
+    static const int PLAYER_HEIGHT = 30;
     
 
     //Key press textures constants
@@ -36,7 +40,7 @@ public:
     SDL_Texture* gTexture = NULL;
 
     //Maximum axis velocity of the player
-	static const int PLAYER_VEL = 10;
+	static const int PLAYER_VEL = 2;
 
     //figure out were to spwan the player on the screen
 
@@ -55,13 +59,16 @@ public:
     //this uses the load Texture funtion so the texture is properly
     //loaded onto gTexture
     bool loadPlayer(Initialize gameinit);
-    //render the player texture
-    void render();
-    //move the player based on user input
-    void move();
 
     //take in key presses from the user which changes the players velocity
     void handleEvent( SDL_Event& e );
+
+    //move the player based on user input
+    void move();
+
+    //render the player texture
+    void render();
+
 
     //an emun that stores the diff states the player wil be in
 
@@ -94,7 +101,7 @@ private:
     int mPosX, mPosY;
 
     //The velocity of the player.this is needed for movement
-    int mVelX, mVelY;
+    int mVelX , mVelY;
 
 
 };

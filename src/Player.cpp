@@ -6,8 +6,6 @@
 #include<iostream>
 
 
-
-
 SDL_Texture* Player::loadTexture( std::string path,Initialize gameinit )
 {
 	
@@ -113,3 +111,67 @@ bool Player::loadPlayer(Initialize gameinit)
 
 	return success;
 }
+
+void Player::handleEvent( SDL_Event& e )
+{
+    //If a key was pressed
+	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
+    {
+        //Adjust the velocity
+        switch( e.key.keysym.sym )
+        {
+            case SDLK_UP: mVelY -= PLAYER_VEL; break;
+            case SDLK_DOWN: mVelY += PLAYER_VEL; break;
+            case SDLK_LEFT: mVelX -= PLAYER_VEL; break;
+            case SDLK_RIGHT: mVelX += PLAYER_VEL; break;
+        }
+    }
+    //If a key was released
+    else if( e.type == SDL_KEYUP && e.key.repeat == 0 )
+    {
+        //Adjust the velocity
+        switch( e.key.keysym.sym )
+        {
+            case SDLK_UP: mVelY += PLAYER_VEL; break;
+            case SDLK_DOWN: mVelY -= PLAYER_VEL; break;
+            case SDLK_LEFT: mVelX += PLAYER_VEL; break;
+            case SDLK_RIGHT: mVelX -= PLAYER_VEL; break;
+        }
+		//this is to stop the y and why position to not build up over time which
+		// causes a rubber band like effect
+		mPosY =0;
+		mPosX= 0;
+    }
+}
+
+void Player::move()
+{
+	//[!] set up the if statements so the player cant leave the 
+	//checkboard
+
+    //Move the dot left or right
+    mPosX += mVelX;
+	//change the x pos of the player
+	renderQuad.x += mPosX;
+
+    //If the dot went too far to the left or right
+    //if( ( mPosX < 0 ) /*|| ( mPosX + PLAYER_WIDTH > gameinit.SCREEN_WIDTH )*/ )
+   // {
+        //Move back
+    //    mPosX -= mVelX;
+   // }
+
+    //Move the dot up or down
+    mPosY += mVelY;
+	//change the x pos of the player
+	renderQuad.y += mPosY;
+
+    //If the dot went too far up or down
+   // if( ( mPosY < 0 ) /*|| ( mPosY + PLAYER_HEIGHT > gameinit.SCREEN_HEIGHT )*/ )
+   // {
+        //Move back
+   //     mPosY -= mVelY;
+	//}
+}
+ 
+
